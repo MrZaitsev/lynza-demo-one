@@ -737,19 +737,19 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
             </div>
           </div>
 
-          <div className="flex justify-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4">
             <motion.button
-              className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-4 rounded-full font-semibold text-lg transition-colors"
+              className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-base sm:text-lg transition-colors justify-center"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => onComplete(true)}
             >
-              <CheckCircle className="w-5 h-5" />
+              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>Complete Investment Simulation</span>
             </motion.button>
             
             <motion.button
-              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full transition-colors"
+              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 sm:px-6 py-3 rounded-full transition-colors justify-center text-base sm:text-lg"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={resetSimulation}
@@ -763,7 +763,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
     }
 
     return (
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Back Button */}
         {onBack && (
           <motion.button
@@ -772,24 +772,24 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back to Video</span>
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="text-sm sm:text-base">Back to Video</span>
           </motion.button>
         )}
 
         <div className="text-center">
-          <div className="text-4xl mb-3">💼</div>
-          <h3 className="text-2xl font-bold text-white mb-2">Investment Simulator</h3>
-          <p className="text-gray-300">Simulate investing $100 in DeFi vs holding Bitcoin</p>
+          <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">💼</div>
+          <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Investment Simulator</h3>
+          <p className="text-gray-300 text-sm sm:text-base px-2">Simulate investing $100 in DeFi vs holding Bitcoin</p>
         </div>
 
         {/* Investment Amount */}
-        <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-600">
-          <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <DollarSign className="w-5 h-5 text-green-400" />
+        <div className="bg-gray-800/50 rounded-xl p-4 sm:p-6 border border-gray-600">
+          <h4 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
+            <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-green-400" />
             Investment Amount
           </h4>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <input
               type="range"
               min="50"
@@ -799,23 +799,23 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
               onChange={(e) => setInvestment(parseInt(e.target.value))}
               className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
             />
-            <div className="text-2xl font-bold text-green-400 min-w-[80px]">
+            <div className="text-xl sm:text-2xl font-bold text-green-400 min-w-[70px] sm:min-w-[80px]">
               ${investment}
             </div>
           </div>
         </div>
 
         {/* Timeframe */}
-        <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-600">
-          <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-blue-400" />
+        <div className="bg-gray-800/50 rounded-xl p-4 sm:p-6 border border-gray-600">
+          <h4 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
+            <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
             Investment Period
           </h4>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-2 sm:flex gap-2">
             {[6, 12, 24, 36].map((months) => (
               <motion.button
                 key={months}
-                className={`flex-1 py-2 px-4 rounded-lg border transition-colors ${
+                className={`flex-1 py-3 sm:py-2 px-2 sm:px-4 rounded-lg border transition-colors text-sm sm:text-base ${
                   timeframe === months
                     ? 'bg-blue-600 border-blue-500 text-white'
                     : 'bg-gray-700 border-gray-600 text-gray-300 hover:border-blue-500/50'
@@ -824,24 +824,25 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setTimeframe(months)}
               >
-                {months} months
+                <span className="block sm:inline">{months}</span>
+                <span className="block sm:inline sm:ml-1">months</span>
               </motion.button>
             ))}
           </div>
         </div>
 
         {/* Investment Strategies */}
-        <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-600">
-          <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-purple-400" />
+        <div className="bg-gray-800/50 rounded-xl p-4 sm:p-6 border border-gray-600">
+          <h4 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
             Choose Your Strategy
           </h4>
           
-          <div className="grid gap-4">
+          <div className="grid gap-3 sm:gap-4">
             {strategies.map((strategy: any, index: number) => (
               <motion.button
                 key={strategy.name}
-                className={`p-4 rounded-lg border-2 text-left transition-all duration-200 ${
+                className={`p-3 sm:p-4 rounded-lg border-2 text-left transition-all duration-200 ${
                   selectedStrategy === strategy.name
                     ? 'bg-purple-900/30 border-purple-500 text-white'
                     : 'bg-gray-700/30 border-gray-600 text-gray-300 hover:border-purple-500/50'
@@ -853,24 +854,24 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <h5 className="font-semibold text-lg">{strategy.name}</h5>
-                  <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                <div className="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+                  <h5 className="font-semibold text-base sm:text-lg flex-1">{strategy.name}</h5>
+                  <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold flex-shrink-0 ${
                     strategy.riskLevel.toLowerCase() === 'low' 
                       ? 'bg-green-900/30 border border-green-500/50 text-green-300'
                       : strategy.riskLevel.toLowerCase() === 'medium'
                         ? 'bg-yellow-900/30 border border-yellow-500/50 text-yellow-300'
                         : 'bg-red-900/30 border border-red-500/50 text-red-300'
                   }`}>
-                    {strategy.riskLevel.toUpperCase()} RISK
+                    <span className="hidden sm:inline">{strategy.riskLevel.toUpperCase()} </span>RISK
                   </div>
                 </div>
                 
-                <p className="text-gray-400 text-sm mb-3">{strategy.description}</p>
+                <p className="text-gray-400 text-xs sm:text-sm mb-2 sm:mb-3 leading-relaxed">{strategy.description}</p>
                 
-                <div className="flex items-center justify-between text-sm mb-3">
+                <div className="flex items-center justify-between text-xs sm:text-sm mb-2 sm:mb-3">
                   <div className="flex items-center gap-1">
-                    <TrendingUp className="w-4 h-4 text-green-400" />
+                    <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-green-400" />
                     <span className="text-green-400">Expected: {strategy.expectedReturn}%</span>
                   </div>
                 </div>
@@ -884,20 +885,20 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
                       transition={{ duration: 0.3 }}
                       className="border-t border-gray-600 pt-3 mt-3 overflow-hidden"
                     >
-                      <div className="grid grid-cols-2 gap-4 text-xs">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs">
                         <div>
-                          <div className="text-green-400 font-semibold mb-1">✓ Pros</div>
+                          <div className="text-green-400 font-semibold mb-1 sm:mb-2">✓ Pros</div>
                           <ul className="space-y-1">
                             {(strategy.pros || []).map((pro: string, i: number) => (
-                              <li key={i} className="text-green-300">• {pro}</li>
+                              <li key={i} className="text-green-300 text-xs leading-relaxed">• {pro}</li>
                             ))}
                           </ul>
                         </div>
                         <div>
-                          <div className="text-red-400 font-semibold mb-1">✗ Cons</div>
+                          <div className="text-red-400 font-semibold mb-1 sm:mb-2">✗ Cons</div>
                           <ul className="space-y-1">
                             {(strategy.cons || []).map((con: string, i: number) => (
-                              <li key={i} className="text-red-300">• {con}</li>
+                              <li key={i} className="text-red-300 text-xs leading-relaxed">• {con}</li>
                             ))}
                           </ul>
                         </div>
@@ -911,9 +912,9 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
         </div>
 
         {/* Simulate Button */}
-        <div className="flex justify-center">
+        <div className="flex justify-center px-4">
           <motion.button
-            className={`flex items-center gap-2 px-8 py-4 rounded-full font-semibold text-lg transition-all ${
+            className={`flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-base sm:text-lg transition-all w-full sm:w-auto justify-center ${
               selectedStrategy && !isSimulating
                 ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700'
                 : 'bg-gray-600 text-gray-400 cursor-not-allowed'
