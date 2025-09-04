@@ -260,7 +260,7 @@ export const useGameStore = create<GameState>()(
           newExperience += lesson.reward.experience || 0;
           
           if (lesson.reward.badges) {
-            lesson.reward.badges.forEach((badgeId: string) => {
+            lesson.reward.badges.forEach((badgeId) => {
               const badge = state.availableBadges.find(b => b.id === badgeId);
               if (badge && !newBadges.find(b => b.id === badgeId)) {
                 newBadges.push({ ...badge, earnedAt: new Date() });

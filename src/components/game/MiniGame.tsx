@@ -10,14 +10,16 @@ import {
   DollarSign,
   Hash,
   Clock,
-  Users
+  Users,
+  ArrowLeft
 } from 'lucide-react';
-import type { MiniGame as MiniGameType } from '../../types/game';
 import { telegram } from '../../utils/telegram';
 
 interface MiniGameProps {
-  miniGame: MiniGameType;
+  type: 'block-builder' | 'security-checker' | 'investment-simulator' | 'wallet-manager';
+  data: Record<string, unknown> | undefined;
   onComplete: (success: boolean) => void;
+  onBack?: () => void;
 }
 
 interface Transaction {
@@ -35,14 +37,14 @@ interface Block {
   nonce: number;
 }
 
-export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
+export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBack }) => {
   const [gameState, setGameState] = useState<'playing' | 'completed' | 'failed'>('playing');
   const [score, setScore] = useState(0);
 
   const renderBlockBuilder = () => {
     const [selectedTransactions, setSelectedTransactions] = useState<Transaction[]>([]);
     const [availableTransactions, setAvailableTransactions] = useState<Transaction[]>(
-      miniGame.data.transactions?.map((t: Transaction, i: number) => ({ ...t, id: `tx-${i}` })) || []
+      (data?.transactions as Transaction[])?.map((t: Transaction, i: number) => ({ ...t, id: `tx-${i}` })) || []
     );
     const [currentBlock, setCurrentBlock] = useState<Partial<Block>>({
       transactions: [],
@@ -71,7 +73,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
       telegram.hapticFeedback('light');
 
       // If all transactions are added, validate the block
-      if (newSelected.length === miniGame.data.transactions.length) {
+      if (newSelected.length === ((data?.transactions as Transaction[])?.length || 0)) {
         setIsValidating(true);
         setTimeout(() => {
           setGameState('completed');
@@ -106,7 +108,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
 
     const handleReset = () => {
       setSelectedTransactions([]);
-      setAvailableTransactions(miniGame.data.transactions?.map((t: Transaction, i: number) => ({ ...t, id: `tx-${i}` })) || []);
+      setAvailableTransactions((data?.transactions as Transaction[])?.map((t: Transaction, i: number) => ({ ...t, id: `tx-${i}` })) || []);
       setCurrentBlock({
         transactions: [],
         timestamp: Date.now(),
@@ -121,10 +123,23 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
 
     return (
       <div className="space-y-6">
+        {/* Back Button */}
+        {onBack && (
+          <motion.button
+            onClick={onBack}
+            className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Video</span>
+          </motion.button>
+        )}
+
         <div className="text-center">
           <div className="text-4xl mb-3">🧱</div>
-          <h3 className="text-2xl font-bold text-white mb-2">{miniGame.title}</h3>
-          <p className="text-gray-300">{miniGame.description}</p>
+          <h3 className="text-2xl font-bold text-white mb-2">Build Your First Block</h3>
+          <p className="text-gray-300">Drag transactions into the correct order to build a valid block</p>
         </div>
 
         {/* Block Visualization */}
@@ -184,7 +199,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
             <div className="flex items-center gap-2 mb-3">
               <Users className="w-4 h-4 text-gray-400" />
               <span className="text-gray-400 text-sm">
-                Transactions ({selectedTransactions.length}/{miniGame.data.transactions.length})
+                Transactions ({selectedTransactions.length}/{((data?.transactions as Transaction[])?.length || 0)})
               </span>
             </div>
             
@@ -332,7 +347,12 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
     const [answers, setAnswers] = useState<number[]>([]);
     const [showExplanation, setShowExplanation] = useState(false);
     const [timeLeft, setTimeLeft] = useState(30);
-    const scenarios = miniGame.data.scenarios || [];
+    const scenarios = (data?.scenarios as Array<{ 
+      id: string; 
+      question: string; 
+      options: Array<{ text: string; isCorrect: boolean }>; 
+      explanation: string;
+    }>) || [];
 
     const handleAnswer = (answerIndex: number) => {
       const newAnswers = [...answers, answerIndex];
@@ -348,7 +368,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
         } else {
           // Calculate final score
           const correctAnswers = newAnswers.filter((answer, index) => 
-            answer === scenarios[index].correct
+            scenarios[index] && scenarios[index].options[answer]?.isCorrect
           ).length;
           const finalScore = Math.round((correctAnswers / scenarios.length) * 100);
           setScore(finalScore);
@@ -427,10 +447,23 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
 
     return (
       <div className="space-y-6">
+        {/* Back Button */}
+        {onBack && (
+          <motion.button
+            onClick={onBack}
+            className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Video</span>
+          </motion.button>
+        )}
+
         <div className="text-center">
           <div className="text-4xl mb-3">🛡️</div>
-          <h3 className="text-2xl font-bold text-white mb-2">{miniGame.title}</h3>
-          <p className="text-gray-300 mb-4">{miniGame.description}</p>
+          <h3 className="text-2xl font-bold text-white mb-2">Security Challenge</h3>
+          <p className="text-gray-300 mb-4">Navigate through various security scenarios and make the right choices</p>
           <div className="flex items-center justify-center gap-4 text-sm text-gray-400">
             <span>Scenario {currentScenario + 1} of {scenarios.length}</span>
             <div className={`flex items-center gap-2 ${timeLeft <= 10 ? 'text-red-400' : 'text-blue-400'}`}>
@@ -475,15 +508,15 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
                 Security Scenario
               </h4>
               <p className="text-gray-300 leading-relaxed">
-                {scenario.situation}
+                {scenario.question}
               </p>
             </div>
           </div>
           
           <div className="space-y-3">
-            {scenario.options.map((option: string, index: number) => {
+            {scenario.options.map((option, index: number) => {
               const isSelected = hasAnswered && answers[currentScenario] === index;
-              const isCorrect = index === scenario.correct;
+              const isCorrect = option.isCorrect;
               const showResult = showExplanation;
 
               return (
@@ -521,7 +554,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
                           </div>
                         )}
                       </div>
-                      <span className="font-medium">{option}</span>
+                      <span className="font-medium">{option.text}</span>
                     </div>
                     {showResult && isCorrect && <CheckCircle className="w-5 h-5 text-green-400" />}
                     {showResult && isSelected && !isCorrect && <X className="w-5 h-5 text-red-400" />}
@@ -544,7 +577,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
                 <div>
                   <h5 className="text-blue-300 font-semibold mb-2">Explanation</h5>
                   <p className="text-blue-200 text-sm">
-                    {scenario.explanation || `The correct answer is "${scenario.options[scenario.correct]}" because it follows security best practices.`}
+                    {scenario.explanation || `The correct answer is "${scenario.options.find(opt => opt.isCorrect)?.text}" because it follows security best practices.`}
                   </p>
                 </div>
               </div>
@@ -561,7 +594,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
     const [timeframe, setTimeframe] = useState(12); // months
     const [isSimulating, setIsSimulating] = useState(false);
     const [results, setResults] = useState<any>(null);
-    const strategies = miniGame.data.scenarios || [];
+    const strategies = (data?.scenarios || []) as Array<{ id: string; name: string; description: string; risk: string; expectedReturn: string; pros: string[]; cons: string[]; }>;
 
     const simulateInvestment = () => {
       if (!selectedStrategy) return;
@@ -571,6 +604,11 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
       
       setTimeout(() => {
         const strategy = strategies.find((s: any) => s.name === selectedStrategy);
+        if (!strategy) {
+          setIsSimulating(false);
+          return;
+        }
+        
         const baseReturn = parseFloat(strategy.expectedReturn.split('-')[0]) / 100;
         const maxReturn = parseFloat(strategy.expectedReturn.split('-')[1].replace('%', '')) / 100;
         const randomReturn = baseReturn + (Math.random() * (maxReturn - baseReturn));
@@ -706,10 +744,23 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
 
     return (
       <div className="space-y-6">
+        {/* Back Button */}
+        {onBack && (
+          <motion.button
+            onClick={onBack}
+            className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Video</span>
+          </motion.button>
+        )}
+
         <div className="text-center">
           <div className="text-4xl mb-3">💼</div>
-          <h3 className="text-2xl font-bold text-white mb-2">{miniGame.title}</h3>
-          <p className="text-gray-300">{miniGame.description}</p>
+          <h3 className="text-2xl font-bold text-white mb-2">Investment Simulator</h3>
+          <p className="text-gray-300">Simulate investing $100 in DeFi vs holding Bitcoin</p>
         </div>
 
         {/* Investment Amount */}
@@ -875,13 +926,15 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
   };
 
   const renderGame = () => {
-    switch (miniGame.type) {
+    switch (type) {
       case 'block-builder':
         return renderBlockBuilder();
       case 'security-checker':
         return renderSecurityChecker();
       case 'investment-simulator':
         return renderInvestmentSimulator();
+      case 'wallet-manager':
+        return renderSecurityChecker(); // Use security checker for wallet manager
       default:
         return (
           <div className="text-center py-8">
@@ -897,7 +950,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ miniGame, onComplete }) => {
     <div className="max-w-4xl mx-auto">
       <AnimatePresence mode="wait">
         <motion.div
-          key={`${miniGame.type}-${gameState}`}
+          key={`${type}-${gameState}`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}

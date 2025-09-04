@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, ArrowRight, Trophy, Coins } from 'lucide-react';
+import { CheckCircle, ArrowRight, ArrowLeft, Trophy, Coins } from 'lucide-react';
 import type { VideoLesson } from '../../types/game';
 import { VideoPlayer } from './VideoPlayer';
-import { InteractiveSection } from './InteractiveSection';
+import { VideoInteractive } from './VideoInteractive';
 import { MiniGame } from './MiniGame';
 import { UpsellModal } from './UpsellModal';
 
 interface VideoLessonViewerProps {
   lesson: VideoLesson;
   onComplete: (success: boolean) => void;
+  onBack: () => void;
 }
 
 export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({ 
   lesson, 
-  onComplete 
+  onComplete,
+  onBack 
 }) => {
   const [currentStep, setCurrentStep] = useState<'video' | 'interactive'>('video');
   const [videoProgress, setVideoProgress] = useState(0);
@@ -24,19 +26,14 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
 
   const handleVideoEnd = () => {
     setVideoCompleted(true);
-    // Auto-advance to interactive if it exists
-    if (lesson.interactiveType && lesson.interactiveType !== 'upsell') {
-      setCurrentStep('interactive');
-    } else if (lesson.interactiveType === 'upsell') {
-      setShowUpsell(true);
-    }
+    // Don't auto-advance - let user choose what to do next
   };
 
   const handleVideoProgress = (progress: number) => {
     setVideoProgress(progress);
   };
 
-  const handleInteractiveComplete = (success: boolean) => {
+  const handleInteractiveComplete = (_success: boolean) => {
     setInteractiveCompleted(true);
     if (lesson.interactiveType === 'upsell') {
       setShowUpsell(true);
@@ -58,14 +55,27 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="mb-8"
         >
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            {lesson.title}
-          </h1>
-          <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-            {lesson.description}
-          </p>
+          {/* Back Button */}
+          <motion.button
+            onClick={onBack}
+            className="mb-6 flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Home</span>
+          </motion.button>
+
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              {lesson.title}
+            </h1>
+            <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+              {lesson.description}
+            </p>
+          </div>
         </motion.div>
 
         {/* Progress Steps */}
@@ -163,9 +173,10 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
               className="max-w-4xl mx-auto"
             >
               {lesson.interactiveType === 'interactive-exercise' && (
-                <InteractiveSection
-                  data={lesson.interactiveData}
+                <VideoInteractive
+                  data={lesson.interactiveData || {}}
                   onComplete={handleInteractiveComplete}
+                  onBack={() => setCurrentStep('video')}
                 />
               )}
 
@@ -176,48 +187,20 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
                   type={lesson.interactiveType}
                   data={lesson.interactiveData}
                   onComplete={handleInteractiveComplete}
+                  onBack={() => setCurrentStep('video')}
                 />
               )}
 
-              {/* Interactive Controls */}
-              <div className="mt-6 flex justify-between items-center">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setCurrentStep('video')}
-                  className="btn-secondary"
-                >
-                  Back to Video
-                </motion.button>
-
-                {interactiveCompleted && (
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleCompleteLesson}
-                    className="btn-primary bg-green-600 hover:bg-green-700 flex items-center space-x-2"
-                  >
-                    <Trophy className="w-5 h-5" />
-                    <span>Complete Lesson</span>
-                    <Coins className="w-5 h-5" />
-                    <span>+{lesson.reward.coins}</span>
-                  </motion.button>
-                )}
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* Upsell Modal */}
-        {showUpsell && (
-          <UpsellModal
-            onClose={() => setShowUpsell(false)}
-            onJoin={() => {
-              console.log('User wants to join Invest+ community');
-              setShowUpsell(false);
-            }}
-          />
-        )}
+        <UpsellModal
+          isOpen={showUpsell}
+          onClose={() => setShowUpsell(false)}
+          trigger="manual"
+        />
       </div>
     </div>
   );

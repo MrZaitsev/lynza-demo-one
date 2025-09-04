@@ -56,7 +56,7 @@ export const levels: Level[] = [
     reward: {
       coins: 100,
       experience: 50,
-      badges: [badges[0], badges[1]]
+      badges: ['first-steps', 'money-historian']
     },
     lessons: [
       {
@@ -195,7 +195,7 @@ export const levels: Level[] = [
     reward: {
       coins: 200,
       experience: 100,
-      badges: [badges[2]]
+      badges: ['block-builder']
     },
     lessons: [
       {
@@ -311,7 +311,7 @@ export const levels: Level[] = [
     reward: {
       coins: 300,
       experience: 150,
-      badges: [badges[3]]
+      badges: ['crypto-collector']
     },
     lessons: [
       {
@@ -421,7 +421,7 @@ export const levels: Level[] = [
     reward: {
       coins: 400,
       experience: 200,
-      badges: [badges[4]]
+      badges: ['guardian-of-keys']
     },
     lessons: [
       {
@@ -590,7 +590,7 @@ export const levels: Level[] = [
     reward: {
       coins: 500,
       experience: 300,
-      badges: [badges[5]]
+      badges: ['defi-master']
     },
     lessons: [
       {
@@ -770,7 +770,7 @@ export const videoLessons: VideoLesson[] = [
     id: 'lesson-1',
     title: 'What is Blockchain',
     description: 'Learn the fundamentals of blockchain technology and how it works',
-    videoUrl: '/src/videos/one.mp4',
+    videoUrl: '/lynza-demo-one/videos/one.mp4',
     interactiveType: 'interactive-exercise',
     interactiveData: {
       type: 'properties-explorer',
@@ -833,7 +833,7 @@ export const videoLessons: VideoLesson[] = [
     id: 'lesson-2',
     title: 'Crypto Wallets and Their Security',
     description: 'Understanding how to safely store and manage your cryptocurrency',
-    videoUrl: '/src/videos/two.mp4',
+    videoUrl: '/lynza-demo-one/videos/two.mp4',
     interactiveType: 'security-checker',
     interactiveData: {
       scenarios: [
@@ -882,7 +882,7 @@ export const videoLessons: VideoLesson[] = [
     id: 'lesson-3',
     title: 'How to Top Up a Wallet and Buy First Tokens',
     description: 'Step-by-step guide to funding your wallet and making your first purchase',
-    videoUrl: '/src/videos/three.mp4',
+    videoUrl: '/lynza-demo-one/videos/three.mp4',
     interactiveType: 'block-builder',
     interactiveData: {
       transactions: [
@@ -908,7 +908,7 @@ export const videoLessons: VideoLesson[] = [
     id: 'lesson-4',
     title: 'Security in Blockchain and Crypto',
     description: 'Advanced security practices and common scams to avoid',
-    videoUrl: '/src/videos/four.mp4',
+    videoUrl: '/lynza-demo-one/videos/four.mp4',
     interactiveType: 'security-checker',
     interactiveData: {
       scenarios: [
@@ -957,7 +957,7 @@ export const videoLessons: VideoLesson[] = [
     id: 'lesson-5',
     title: 'About the "Invest" and "Invest+" Programs',
     description: 'Discover advanced investment strategies and join our premium community',
-    videoUrl: '/src/videos/five.mp4',
+    videoUrl: '/lynza-demo-one/videos/five.mp4',
     interactiveType: 'upsell',
     reward: {
       coins: 300,

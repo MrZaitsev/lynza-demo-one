@@ -338,7 +338,7 @@ export const LessonViewer: React.FC<LessonViewerProps> = ({ lesson, onComplete, 
           transition={{ duration: 0.3 }}
         >
           {showMiniGame && lesson.miniGame
-            ? <MiniGame miniGame={lesson.miniGame} onComplete={handleMiniGameComplete} />
+            ? <MiniGame type={lesson.miniGame.type} data={lesson.miniGame.data} onComplete={handleMiniGameComplete} />
             : showQuiz 
               ? renderQuiz() 
               : renderSection(sections[currentSection])

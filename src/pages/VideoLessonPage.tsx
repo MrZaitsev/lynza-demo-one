@@ -23,6 +23,7 @@ export const VideoLessonPage: React.FC<VideoLessonPageProps> = ({ lesson, onBack
     <VideoLessonViewer
       lesson={lesson}
       onComplete={handleComplete}
+      onBack={onBack}
     />
   );
 };

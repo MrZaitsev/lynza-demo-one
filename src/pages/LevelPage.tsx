@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Play, CheckCircle, Lock, Clock, Star, Coins } from 'lucide-react';
 import { useGameStore } from '../store/gameStore';
+import { badges } from '../data/gameData';
 import { telegram } from '../utils/telegram';
 import { GameCard } from '../components/ui/GameCard';
 import { ProgressBar } from '../components/ui/ProgressBar';
@@ -225,7 +226,7 @@ export const LevelPage: React.FC<LevelPageProps> = ({ levelId, onBack, onLessonS
                 </div>
                 {level.reward.badges && level.reward.badges.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <span className="text-2xl">{level.reward.badges[0].icon}</span>
+                    <span className="text-2xl">{badges.find(b => b.id === level.reward.badges![0])?.icon || '🏆'}</span>
                     <span className="text-purple-400 font-bold">Special Badge</span>
                   </div>
                 )}

@@ -106,7 +106,7 @@ export interface MiniGame {
 export interface Reward {
   coins: number;
   experience: number;
-  badges?: Badge[];
+  badges?: string[]; // Badge IDs
   items?: Item[];
 }
 
