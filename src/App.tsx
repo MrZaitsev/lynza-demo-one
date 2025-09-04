@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Home } from './pages/Home';
-import { LevelPage } from './pages/LevelPage';
-import { LessonPage } from './pages/LessonPage';
+import { VideoLessonPage } from './pages/VideoLessonPage';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { telegram } from './utils/telegram';
+import type { VideoLesson } from './types/game';
 
-type Page = 'home' | 'level' | 'lesson';
+type Page = 'home' | 'video-lesson';
 
 interface AppState {
   currentPage: Page;
-  selectedLevelId?: number;
-  selectedLessonId?: string;
+  selectedLesson?: VideoLesson;
 }
 
 function App() {
@@ -27,18 +26,10 @@ function App() {
     }
   }, []);
 
-  const navigateToLevel = (levelId: number) => {
+  const navigateToLesson = (lesson: VideoLesson) => {
     setAppState({
-      currentPage: 'level',
-      selectedLevelId: levelId
-    });
-  };
-
-  const navigateToLesson = (lessonId: string) => {
-    setAppState({
-      ...appState,
-      currentPage: 'lesson',
-      selectedLessonId: lessonId
+      currentPage: 'video-lesson',
+      selectedLesson: lesson
     });
   };
 
@@ -48,56 +39,24 @@ function App() {
     });
   };
 
-  const navigateBack = () => {
-    if (appState.currentPage === 'lesson') {
-      setAppState({
-        currentPage: 'level',
-        selectedLevelId: appState.selectedLevelId
-      });
-    } else if (appState.currentPage === 'level') {
-      navigateToHome();
-    }
-  };
-
-  const handleLessonComplete = () => {
-    // After lesson completion, go back to level page
-    setAppState({
-      currentPage: 'level',
-      selectedLevelId: appState.selectedLevelId
-    });
-  };
-
   const renderCurrentPage = () => {
     switch (appState.currentPage) {
       case 'home':
-        return <Home onLevelSelect={navigateToLevel} />;
+        return <Home onStartLesson={navigateToLesson} />;
       
-      case 'level':
-        if (!appState.selectedLevelId) {
-          return <Home onLevelSelect={navigateToLevel} />;
+      case 'video-lesson':
+        if (!appState.selectedLesson) {
+          return <Home onStartLesson={navigateToLesson} />;
         }
         return (
-          <LevelPage
-            levelId={appState.selectedLevelId}
-            onBack={navigateBack}
-            onLessonSelect={navigateToLesson}
-          />
-        );
-      
-      case 'lesson':
-        if (!appState.selectedLessonId) {
-          return <Home onLevelSelect={navigateToLevel} />;
-        }
-        return (
-          <LessonPage
-            lessonId={appState.selectedLessonId}
-            onBack={navigateBack}
-            onComplete={handleLessonComplete}
+          <VideoLessonPage
+            lesson={appState.selectedLesson}
+            onBack={navigateToHome}
           />
         );
       
       default:
-        return <Home onLevelSelect={navigateToLevel} />;
+        return <Home onStartLesson={navigateToLesson} />;
     }
   };
 

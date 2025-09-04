@@ -30,6 +30,19 @@ export interface Level {
   isCompleted: boolean;
 }
 
+export interface VideoLesson {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl: string;
+  interactiveType?: 'block-builder' | 'security-checker' | 'investment-simulator' | 'interactive-exercise' | 'upsell';
+  interactiveData?: Record<string, unknown>;
+  reward: Reward;
+  isUnlocked: boolean;
+  isCompleted: boolean;
+  order: number;
+}
+
 export interface Lesson {
   id: string;
   title: string;

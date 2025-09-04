@@ -1,4 +1,4 @@
-import type { Level, Badge, Achievement } from '../types/game';
+import type { Level, Badge, Achievement, VideoLesson } from '../types/game';
 
 export const badges: Badge[] = [
   {
@@ -762,5 +762,210 @@ export const achievements: Achievement[] = [
       coins: 200,
       experience: 100
     }
+  }
+];
+
+export const videoLessons: VideoLesson[] = [
+  {
+    id: 'lesson-1',
+    title: 'What is Blockchain',
+    description: 'Learn the fundamentals of blockchain technology and how it works',
+    videoUrl: '/src/videos/one.mp4',
+    interactiveType: 'interactive-exercise',
+    interactiveData: {
+      type: 'properties-explorer',
+      title: 'What Makes Good Money?',
+      properties: [
+        {
+          id: 'durable',
+          name: 'Durable',
+          icon: '🛡️',
+          explanation: 'Good money should last over time without deteriorating. Gold has been valuable for thousands of years because it doesn\'t rust or decay.',
+          examples: ['Gold coins lasting centuries', 'Digital currencies stored on blockchain']
+        },
+        {
+          id: 'portable',
+          name: 'Portable',
+          icon: '🎒',
+          explanation: 'Money should be easy to transport and transfer. Digital currencies excel at this - you can send millions across the world in minutes.',
+          examples: ['Credit cards vs gold bars', 'Bitcoin transactions worldwide']
+        },
+        {
+          id: 'divisible',
+          name: 'Divisible',
+          icon: '✂️',
+          explanation: 'Good money can be divided into smaller units for precise transactions. You can buy a coffee with exact change.',
+          examples: ['Dollars and cents', 'Bitcoin and satoshis (0.00000001 BTC)']
+        },
+        {
+          id: 'uniform',
+          name: 'Uniform',
+          icon: '📏',
+          explanation: 'Each unit should be identical and interchangeable. One dollar bill has the same value as any other dollar bill.',
+          examples: ['Standardized coins and bills', 'Each Bitcoin is identical to another']
+        },
+        {
+          id: 'limited-supply',
+          name: 'Limited Supply',
+          icon: '💎',
+          explanation: 'Scarcity creates and maintains value. If money could be created infinitely, it would become worthless.',
+          examples: ['Gold is finite on Earth', 'Bitcoin has a 21 million coin limit']
+        },
+        {
+          id: 'acceptable',
+          name: 'Acceptable',
+          icon: '🤝',
+          explanation: 'People must trust and accept it as payment. The more widely accepted, the better it functions as money.',
+          examples: ['US Dollar accepted globally', 'Bitcoin accepted by growing number of merchants']
+        }
+      ]
+    },
+    reward: {
+      coins: 100,
+      experience: 50,
+      badges: ['first-steps']
+    },
+    isUnlocked: true,
+    isCompleted: false,
+    order: 1
+  },
+  {
+    id: 'lesson-2',
+    title: 'Crypto Wallets and Their Security',
+    description: 'Understanding how to safely store and manage your cryptocurrency',
+    videoUrl: '/src/videos/two.mp4',
+    interactiveType: 'security-checker',
+    interactiveData: {
+      scenarios: [
+        {
+          id: 'lost-phone',
+          question: 'You lost your phone with your wallet app. What should you do first?',
+          options: [
+            { text: 'Panic and do nothing', isCorrect: false },
+            { text: 'Immediately use your seed phrase to recover the wallet', isCorrect: true },
+            { text: 'Buy a new phone and hope the app still works', isCorrect: false }
+          ],
+          explanation: 'Your seed phrase is your backup key. Use it immediately to recover your wallet on a new device before someone finds your phone.'
+        },
+        {
+          id: 'seed-phrase-storage',
+          question: 'Where is the SAFEST place to store your seed phrase?',
+          options: [
+            { text: 'In your phone\'s notes app', isCorrect: false },
+            { text: 'Written on paper in a secure location', isCorrect: true },
+            { text: 'In your email drafts', isCorrect: false }
+          ],
+          explanation: 'Physical paper storage is safest. Digital storage can be hacked, but paper stored securely offline cannot be accessed remotely.'
+        },
+        {
+          id: 'public-wifi',
+          question: 'Should you access your crypto wallet on public WiFi?',
+          options: [
+            { text: 'Yes, it\'s fine', isCorrect: false },
+            { text: 'Only for checking balance', isCorrect: false },
+            { text: 'Never, use mobile data or VPN', isCorrect: true }
+          ],
+          explanation: 'Public WiFi can be monitored. Hackers can intercept your data. Always use secure connections for financial activities.'
+        }
+      ]
+    },
+    reward: {
+      coins: 150,
+      experience: 75,
+      badges: ['guardian-of-keys']
+    },
+    isUnlocked: false,
+    isCompleted: false,
+    order: 2
+  },
+  {
+    id: 'lesson-3',
+    title: 'How to Top Up a Wallet and Buy First Tokens',
+    description: 'Step-by-step guide to funding your wallet and making your first purchase',
+    videoUrl: '/src/videos/three.mp4',
+    interactiveType: 'block-builder',
+    interactiveData: {
+      transactions: [
+        { id: 'tx1', from: 'Alice', to: 'Bob', amount: 10, fee: 0.1 },
+        { id: 'tx2', from: 'Charlie', to: 'Alice', amount: 5, fee: 0.05 },
+        { id: 'tx3', from: 'Bob', to: 'Charlie', amount: 3, fee: 0.03 }
+      ],
+      correctOrder: ['tx2', 'tx1', 'tx3'],
+      blockNumber: 804414,
+      previousHash: '000abc123def456...',
+      explanation: 'Transactions are ordered by timestamp and fee priority. Higher fees get processed first!'
+    },
+    reward: {
+      coins: 200,
+      experience: 100,
+      badges: ['block-builder']
+    },
+    isUnlocked: false,
+    isCompleted: false,
+    order: 3
+  },
+  {
+    id: 'lesson-4',
+    title: 'Security in Blockchain and Crypto',
+    description: 'Advanced security practices and common scams to avoid',
+    videoUrl: '/src/videos/four.mp4',
+    interactiveType: 'security-checker',
+    interactiveData: {
+      scenarios: [
+        {
+          id: 'phishing-email',
+          question: 'You receive an email saying "Your wallet will be closed! Click here to verify." What do you do?',
+          options: [
+            { text: 'Click the link immediately', isCorrect: false },
+            { text: 'Delete the email - it\'s a scam', isCorrect: true },
+            { text: 'Forward it to friends', isCorrect: false }
+          ],
+          explanation: 'This is a classic phishing scam. Legitimate services never ask you to "verify" via email links. Always go directly to the official website.'
+        },
+        {
+          id: 'social-media-giveaway',
+          question: 'A "celebrity" on Twitter offers to double any crypto you send them. Your response?',
+          options: [
+            { text: 'Send a small amount to test', isCorrect: false },
+            { text: 'It\'s obviously a scam', isCorrect: true },
+            { text: 'Ask friends if it\'s real', isCorrect: false }
+          ],
+          explanation: 'No legitimate person or organization will ask you to send crypto first to receive more back. This is always a scam.'
+        },
+        {
+          id: 'hardware-wallet',
+          question: 'For large amounts of crypto, what\'s the best storage method?',
+          options: [
+            { text: 'Leave it on an exchange', isCorrect: false },
+            { text: 'Use a hardware wallet', isCorrect: true },
+            { text: 'Keep it in a mobile app', isCorrect: false }
+          ],
+          explanation: 'Hardware wallets store your keys offline, making them nearly impossible to hack. They\'re the gold standard for large amounts.'
+        }
+      ]
+    },
+    reward: {
+      coins: 250,
+      experience: 125,
+      badges: ['crypto-collector']
+    },
+    isUnlocked: false,
+    isCompleted: false,
+    order: 4
+  },
+  {
+    id: 'lesson-5',
+    title: 'About the "Invest" and "Invest+" Programs',
+    description: 'Discover advanced investment strategies and join our premium community',
+    videoUrl: '/src/videos/five.mp4',
+    interactiveType: 'upsell',
+    reward: {
+      coins: 300,
+      experience: 150,
+      badges: ['defi-master']
+    },
+    isUnlocked: false,
+    isCompleted: false,
+    order: 5
   }
 ];

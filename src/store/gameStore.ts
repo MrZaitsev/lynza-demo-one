@@ -1,23 +1,29 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { User, Level, Badge, Achievement } from '../types/game';
-import { levels, badges, achievements } from '../data/gameData';
+import type { User, Level, Badge, Achievement, VideoLesson } from '../types/game';
+import { levels, badges, achievements, videoLessons } from '../data/gameData';
 
 interface GameState {
   user: User;
   levels: Level[];
+  videoLessons: VideoLesson[];
   availableBadges: Badge[];
   achievements: Achievement[];
+  currentVideoLesson: VideoLesson | null;
   
   // Actions
-  initializeUser: (telegramUser: any) => void;
+  initializeUser: (telegramUser: { id?: number; first_name?: string } | null) => void;
   completeLesson: (lessonId: string) => void;
+  completeVideoLesson: (lessonId: string) => void;
   unlockLevel: (levelId: number) => void;
+  unlockNextVideoLesson: () => void;
   awardBadge: (badgeId: string) => void;
   addCoins: (amount: number) => void;
   addExperience: (amount: number) => void;
   checkAchievements: () => void;
   resetProgress: () => void;
+  getCurrentVideoLesson: () => VideoLesson | null;
+  getNextVideoLesson: () => VideoLesson | null;
 }
 
 const initialUser: User = {
@@ -43,8 +49,14 @@ export const useGameStore = create<GameState>()(
           isUnlocked: index === 0 && lessonIndex === 0
         }))
       })),
+      videoLessons: videoLessons.map((lesson, index) => ({
+        ...lesson,
+        isUnlocked: index === 0,
+        isCompleted: false
+      })),
       availableBadges: badges,
       achievements: achievements,
+      currentVideoLesson: null,
 
       initializeUser: (telegramUser) => {
         const currentState = get();
@@ -225,6 +237,78 @@ export const useGameStore = create<GameState>()(
         });
       },
 
+      completeVideoLesson: (lessonId: string) => {
+        const state = get();
+        const lesson = state.videoLessons.find(l => l.id === lessonId);
+        
+        if (!lesson || lesson.isCompleted) {
+          return; // Lesson not found or already completed
+        }
+
+        // Update lesson as completed
+        const updatedVideoLessons = state.videoLessons.map(l => 
+          l.id === lessonId ? { ...l, isCompleted: true } : l
+        );
+
+        // Apply rewards
+        let newCoins = state.user.coins;
+        let newExperience = state.user.experience;
+        const newBadges = [...state.user.badges];
+
+        if (lesson.reward) {
+          newCoins += lesson.reward.coins || 0;
+          newExperience += lesson.reward.experience || 0;
+          
+          if (lesson.reward.badges) {
+            lesson.reward.badges.forEach((badgeId: string) => {
+              const badge = state.availableBadges.find(b => b.id === badgeId);
+              if (badge && !newBadges.find(b => b.id === badgeId)) {
+                newBadges.push({ ...badge, earnedAt: new Date() });
+              }
+            });
+          }
+        }
+
+        set({
+          videoLessons: updatedVideoLessons,
+          user: {
+            ...state.user,
+            coins: newCoins,
+            experience: newExperience,
+            badges: newBadges,
+            completedLessons: [...state.user.completedLessons, lessonId]
+          }
+        });
+
+        // Unlock next lesson
+        get().unlockNextVideoLesson();
+      },
+
+      unlockNextVideoLesson: () => {
+        const state = get();
+        const currentLessonIndex = state.videoLessons.findIndex(l => l.isCompleted);
+        const nextLessonIndex = currentLessonIndex + 1;
+        
+        if (nextLessonIndex < state.videoLessons.length) {
+          const updatedVideoLessons = state.videoLessons.map((lesson, index) => 
+            index === nextLessonIndex ? { ...lesson, isUnlocked: true } : lesson
+          );
+          
+          set({ videoLessons: updatedVideoLessons });
+        }
+      },
+
+      getCurrentVideoLesson: () => {
+        const state = get();
+        return state.videoLessons.find(l => l.isUnlocked && !l.isCompleted) || null;
+      },
+
+      getNextVideoLesson: () => {
+        const state = get();
+        const completedCount = state.videoLessons.filter(l => l.isCompleted).length;
+        return state.videoLessons[completedCount] || null;
+      },
+
       resetProgress: () => {
         set({
           user: { ...initialUser, id: get().user.id, name: get().user.name },
@@ -237,7 +321,13 @@ export const useGameStore = create<GameState>()(
               isUnlocked: index === 0 && lessonIndex === 0,
               isCompleted: false
             }))
-          }))
+          })),
+          videoLessons: videoLessons.map((lesson, index) => ({
+            ...lesson,
+            isUnlocked: index === 0,
+            isCompleted: false
+          })),
+          currentVideoLesson: null
         });
       }
     }),
