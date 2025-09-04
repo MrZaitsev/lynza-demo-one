@@ -613,7 +613,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
     const [timeframe, setTimeframe] = useState(12); // months
     const [isSimulating, setIsSimulating] = useState(false);
     const [results, setResults] = useState<any>(null);
-    const strategies = (data?.scenarios || []) as Array<{ id: string; name: string; description: string; risk: string; expectedReturn: string; pros: string[]; cons: string[]; }>;
+    const strategies = (data?.strategies || []) as Array<{ id: string; name: string; description: string; riskLevel: string; expectedReturn: number; timeframe: string; pros: string[]; cons: string[]; }>;
 
     const simulateInvestment = () => {
       if (!selectedStrategy) return;
@@ -628,10 +628,11 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
           return;
         }
         
-        const baseReturn = parseFloat(strategy.expectedReturn.split('-')[0]) / 100;
-        const maxReturn = parseFloat(strategy.expectedReturn.split('-')[1].replace('%', '')) / 100;
-        const randomReturn = baseReturn + (Math.random() * (maxReturn - baseReturn));
-        const finalAmount = investment * (1 + randomReturn);
+        const baseReturn = strategy.expectedReturn / 100;
+        // Add some randomness (±3% from expected return)
+        const randomVariation = (Math.random() - 0.5) * 0.06; // ±3%
+        const actualReturn = baseReturn + randomVariation;
+        const finalAmount = investment * (1 + actualReturn);
         const profit = finalAmount - investment;
         const profitPercentage = (profit / investment) * 100;
         
@@ -641,7 +642,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
           finalAmount: Math.round(finalAmount * 100) / 100,
           profit: Math.round(profit * 100) / 100,
           profitPercentage: Math.round(profitPercentage * 100) / 100,
-          risk: strategy.risk,
+          risk: strategy.riskLevel,
           timeframe
         });
         
@@ -855,13 +856,13 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
                 <div className="flex items-center justify-between mb-3">
                   <h5 className="font-semibold text-lg">{strategy.name}</h5>
                   <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    strategy.risk === 'low' 
+                    strategy.riskLevel.toLowerCase() === 'low' 
                       ? 'bg-green-900/30 border border-green-500/50 text-green-300'
-                      : strategy.risk === 'medium'
+                      : strategy.riskLevel.toLowerCase() === 'medium'
                         ? 'bg-yellow-900/30 border border-yellow-500/50 text-yellow-300'
                         : 'bg-red-900/30 border border-red-500/50 text-red-300'
                   }`}>
-                    {strategy.risk.toUpperCase()} RISK
+                    {strategy.riskLevel.toUpperCase()} RISK
                   </div>
                 </div>
                 
@@ -870,7 +871,7 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
                 <div className="flex items-center justify-between text-sm mb-3">
                   <div className="flex items-center gap-1">
                     <TrendingUp className="w-4 h-4 text-green-400" />
-                    <span className="text-green-400">Expected: {strategy.expectedReturn}</span>
+                    <span className="text-green-400">Expected: {strategy.expectedReturn}%</span>
                   </div>
                 </div>
                 
