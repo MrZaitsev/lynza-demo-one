@@ -286,8 +286,8 @@ export const useGameStore = create<GameState>()(
 
       unlockNextVideoLesson: () => {
         const state = get();
-        const currentLessonIndex = state.videoLessons.findIndex(l => l.isCompleted);
-        const nextLessonIndex = currentLessonIndex + 1;
+        const completedCount = state.videoLessons.filter(l => l.isCompleted).length;
+        const nextLessonIndex = completedCount; // Next lesson is at index equal to completed count
         
         if (nextLessonIndex < state.videoLessons.length) {
           const updatedVideoLessons = state.videoLessons.map((lesson, index) => 

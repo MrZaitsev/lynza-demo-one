@@ -41,7 +41,7 @@ export const VideoInteractive: React.FC<VideoInteractiveProps> = ({
   };
 
   const handleComplete = () => {
-    onComplete(allExplored);
+    onComplete(true); // Always return true since user completed the interactive
     telegram.hapticFeedback('success');
   };
 

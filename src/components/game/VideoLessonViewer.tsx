@@ -33,77 +33,80 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
     setVideoProgress(progress);
   };
 
-  const handleInteractiveComplete = (_success: boolean) => {
+  const handleInteractiveComplete = (success: boolean) => {
     setInteractiveCompleted(true);
     if (lesson.interactiveType === 'upsell') {
       setShowUpsell(true);
     }
-    // Don't auto-complete lesson - wait for user to click Complete
+    // Complete the lesson immediately after interactive completion
+    if (success && videoCompleted) {
+      handleCompleteLesson();
+    }
   };
 
   const handleCompleteLesson = () => {
     onComplete(true);
   };
 
-  const canProceedToInteractive = videoCompleted || videoProgress >= 90;
+  const canProceedToInteractive = videoCompleted;
   const canCompleteLesson = videoCompleted && (!lesson.interactiveType || lesson.interactiveType === 'upsell' || interactiveCompleted);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
           {/* Back Button */}
           <motion.button
             onClick={onBack}
-            className="mb-6 flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+            className="mb-4 sm:mb-6 flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back to Home</span>
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="text-sm sm:text-base">Back to Home</span>
           </motion.button>
 
           <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4 px-2">
               {lesson.title}
             </h1>
-            <p className="text-gray-300 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-300 text-base sm:text-lg max-w-2xl mx-auto px-4">
               {lesson.description}
             </p>
           </div>
         </motion.div>
 
         {/* Progress Steps */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center space-x-4">
+        <div className="flex justify-center mb-6 sm:mb-8">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Video Step */}
             <div className="flex items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
                 videoCompleted ? 'bg-green-500' : currentStep === 'video' ? 'bg-blue-500' : 'bg-gray-600'
               }`}>
-                {videoCompleted ? <CheckCircle className="w-6 h-6 text-white" /> : <span className="text-white font-bold">1</span>}
+                {videoCompleted ? <CheckCircle className="w-4 h-4 sm:w-6 sm:h-6 text-white" /> : <span className="text-white font-bold text-sm sm:text-base">1</span>}
               </div>
-              <span className="ml-2 text-white font-medium">Watch Video</span>
+              <span className="ml-1 sm:ml-2 text-white font-medium text-sm sm:text-base">Watch Video</span>
             </div>
 
             {/* Arrow */}
             {lesson.interactiveType && lesson.interactiveType !== 'upsell' && (
               <>
-                <ArrowRight className="w-5 h-5 text-gray-400" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                 
                 {/* Interactive Step */}
                 <div className="flex items-center">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${
                     interactiveCompleted ? 'bg-green-500' : currentStep === 'interactive' ? 'bg-blue-500' : 'bg-gray-600'
                   }`}>
-                    {interactiveCompleted ? <CheckCircle className="w-6 h-6 text-white" /> : <span className="text-white font-bold">2</span>}
+                    {interactiveCompleted ? <CheckCircle className="w-4 h-4 sm:w-6 sm:h-6 text-white" /> : <span className="text-white font-bold text-sm sm:text-base">2</span>}
                   </div>
-                  <span className="ml-2 text-white font-medium">Interactive</span>
+                  <span className="ml-1 sm:ml-2 text-white font-medium text-sm sm:text-base">Interactive</span>
                 </div>
               </>
             )}
@@ -128,21 +131,21 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
               />
 
               {/* Video Controls */}
-              <div className="mt-6 flex justify-between items-center">
-                <div className="text-white">
-                  <div className="text-sm opacity-75">Progress: {Math.round(videoProgress)}%</div>
+              <div className="mt-4 sm:mt-6">
+                <div className="text-white mb-4">
+                  <div className="text-xs sm:text-sm opacity-75 text-center">Progress: {Math.round(videoProgress)}%</div>
                 </div>
 
-                <div className="flex space-x-4">
+                <div className="flex flex-col sm:flex-row justify-center items-center space-y-3 sm:space-y-0 sm:space-x-4">
                   {canProceedToInteractive && lesson.interactiveType && lesson.interactiveType !== 'upsell' && (
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setCurrentStep('interactive')}
-                      className="btn-primary flex items-center space-x-2"
+                      className="btn-primary flex items-center space-x-2 w-full sm:w-auto justify-center"
                     >
-                      <span>Continue to Interactive</span>
-                      <ArrowRight className="w-5 h-5" />
+                      <span className="text-sm sm:text-base">Continue to Interactive</span>
+                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.button>
                   )}
 
@@ -151,11 +154,11 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={handleCompleteLesson}
-                      className="btn-primary bg-green-600 hover:bg-green-700 flex items-center space-x-2"
+                      className="btn-primary bg-green-600 hover:bg-green-700 flex items-center space-x-2 w-full sm:w-auto justify-center"
                     >
-                      <Trophy className="w-5 h-5" />
-                      <span>Complete Lesson</span>
-                      <Coins className="w-5 h-5" />
+                      <Trophy className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span className="text-sm sm:text-base">Complete Lesson</span>
+                      <Coins className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span>+{lesson.reward.coins}</span>
                     </motion.button>
                   )}
