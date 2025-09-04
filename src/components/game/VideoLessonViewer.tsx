@@ -26,7 +26,7 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
 
   const handleVideoEnd = () => {
     setVideoCompleted(true);
-    // Don't auto-advance - let user choose what to do next
+    // Don't auto-show modal - wait for user to click Complete Lesson
   };
 
   const handleVideoProgress = (progress: number) => {
@@ -35,21 +35,32 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
 
   const handleInteractiveComplete = (success: boolean) => {
     setInteractiveCompleted(true);
-    if (lesson.interactiveType === 'upsell') {
-      setShowUpsell(true);
-    }
-    // Complete the lesson immediately after interactive completion
-    if (success && videoCompleted) {
+    // Don't auto-complete lesson for upsell type - wait for upsell modal to be closed
+    if (success && videoCompleted && lesson.interactiveType !== 'upsell') {
       handleCompleteLesson();
     }
   };
 
-  const handleCompleteLesson = () => {
+  const handleUpsellClose = () => {
+    setShowUpsell(false);
+    setInteractiveCompleted(true);
+    // Complete the lesson after upsell modal is closed
     onComplete(true);
   };
 
+  const handleCompleteLesson = () => {
+    // For upsell lessons, show the modal first before completing
+    if (lesson.interactiveType === 'upsell') {
+      setShowUpsell(true);
+    } else {
+      onComplete(true);
+    }
+  };
+
   const canProceedToInteractive = videoCompleted;
-  const canCompleteLesson = videoCompleted && (!lesson.interactiveType || lesson.interactiveType === 'upsell' || interactiveCompleted);
+  const canCompleteLesson = videoCompleted && !showUpsell && (
+    lesson.interactiveType === 'upsell' || !lesson.interactiveType || interactiveCompleted
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800">
@@ -95,7 +106,7 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
             </div>
 
             {/* Arrow */}
-            {lesson.interactiveType && lesson.interactiveType !== 'upsell' && (
+            {lesson.interactiveType && (
               <>
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                 
@@ -106,7 +117,9 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
                   }`}>
                     {interactiveCompleted ? <CheckCircle className="w-4 h-4 sm:w-6 sm:h-6 text-white" /> : <span className="text-white font-bold text-sm sm:text-base">2</span>}
                   </div>
-                  <span className="ml-1 sm:ml-2 text-white font-medium text-sm sm:text-base">Interactive</span>
+                  <span className="ml-1 sm:ml-2 text-white font-medium text-sm sm:text-base">
+                    {lesson.interactiveType === 'upsell' ? 'Offer' : 'Practice'}
+                  </span>
                 </div>
               </>
             )}
@@ -144,7 +157,7 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
                       onClick={() => setCurrentStep('interactive')}
                       className="btn-primary flex items-center space-x-2 w-full sm:w-auto justify-center"
                     >
-                      <span className="text-sm sm:text-base">Continue to Interactive</span>
+                      <span className="text-sm sm:text-base">Continue to Practice</span>
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.button>
                   )}
@@ -194,6 +207,7 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
                 />
               )}
 
+
             </motion.div>
           )}
         </AnimatePresence>
@@ -201,8 +215,8 @@ export const VideoLessonViewer: React.FC<VideoLessonViewerProps> = ({
         {/* Upsell Modal */}
         <UpsellModal
           isOpen={showUpsell}
-          onClose={() => setShowUpsell(false)}
-          trigger="manual"
+          onClose={handleUpsellClose}
+          trigger="all-complete"
         />
       </div>
     </div>

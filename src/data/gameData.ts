@@ -909,38 +909,39 @@ export const videoLessons: VideoLesson[] = [
     title: 'Security in Blockchain and Crypto',
     description: 'Advanced security practices and common scams to avoid',
     videoUrl: '/lynza-demo-one/videos/four.mp4',
-    interactiveType: 'security-checker',
+    interactiveType: 'investment-simulator',
     interactiveData: {
-      scenarios: [
+      initialAmount: 1000,
+      strategies: [
         {
-          id: 'phishing-email',
-          question: 'You receive an email saying "Your wallet will be closed! Click here to verify." What do you do?',
-          options: [
-            { text: 'Click the link immediately', isCorrect: false },
-            { text: 'Delete the email - it\'s a scam', isCorrect: true },
-            { text: 'Forward it to friends', isCorrect: false }
-          ],
-          explanation: 'This is a classic phishing scam. Legitimate services never ask you to "verify" via email links. Always go directly to the official website.'
+          id: 'hodl',
+          name: 'HODL (Hold)',
+          description: 'Buy and hold for the long term',
+          riskLevel: 'Low',
+          expectedReturn: 15,
+          timeframe: '1-5 years',
+          pros: ['Simple strategy', 'Lower stress', 'Historically profitable'],
+          cons: ['Misses trading opportunities', 'Requires patience', 'Market timing ignored']
         },
         {
-          id: 'social-media-giveaway',
-          question: 'A "celebrity" on Twitter offers to double any crypto you send them. Your response?',
-          options: [
-            { text: 'Send a small amount to test', isCorrect: false },
-            { text: 'It\'s obviously a scam', isCorrect: true },
-            { text: 'Ask friends if it\'s real', isCorrect: false }
-          ],
-          explanation: 'No legitimate person or organization will ask you to send crypto first to receive more back. This is always a scam.'
+          id: 'dca',
+          name: 'Dollar Cost Averaging',
+          description: 'Invest fixed amount regularly regardless of price',
+          riskLevel: 'Low',
+          expectedReturn: 12,
+          timeframe: '6 months - 2 years',
+          pros: ['Reduces timing risk', 'Builds discipline', 'Smooths volatility'],
+          cons: ['May miss big dips', 'Slower to deploy capital', 'Requires consistency']
         },
         {
-          id: 'hardware-wallet',
-          question: 'For large amounts of crypto, what\'s the best storage method?',
-          options: [
-            { text: 'Leave it on an exchange', isCorrect: false },
-            { text: 'Use a hardware wallet', isCorrect: true },
-            { text: 'Keep it in a mobile app', isCorrect: false }
-          ],
-          explanation: 'Hardware wallets store your keys offline, making them nearly impossible to hack. They\'re the gold standard for large amounts.'
+          id: 'trading',
+          name: 'Active Trading',
+          description: 'Buy low, sell high with technical analysis',
+          riskLevel: 'High',
+          expectedReturn: 25,
+          timeframe: 'Days to months',
+          pros: ['Higher profit potential', 'More control', 'Can profit in any market'],
+          cons: ['High risk of losses', 'Time consuming', 'Requires expertise']
         }
       ]
     },
@@ -959,6 +960,50 @@ export const videoLessons: VideoLesson[] = [
     description: 'Discover advanced investment strategies and join our premium community',
     videoUrl: '/lynza-demo-one/videos/five.mp4',
     interactiveType: 'upsell',
+    interactiveData: {
+      title: 'Ready to Level Up Your Crypto Journey?',
+      subtitle: 'Join thousands of successful investors in our premium community',
+      features: [
+        {
+          icon: '🎯',
+          title: 'Expert Analysis',
+          description: 'Get daily market insights from professional traders'
+        },
+        {
+          icon: '🤝',
+          title: 'Community Support',
+          description: 'Connect with like-minded investors and share strategies'
+        },
+        {
+          icon: '📊',
+          title: 'Advanced Tools',
+          description: 'Access premium charts, indicators, and portfolio tracking'
+        },
+        {
+          icon: '🚀',
+          title: 'Early Access',
+          description: 'Be first to know about new opportunities and projects'
+        }
+      ],
+      plans: [
+        {
+          id: 'invest',
+          name: 'Invest',
+          price: '$29/month',
+          description: 'Perfect for beginners',
+          features: ['Daily market updates', 'Basic community access', 'Educational content'],
+          recommended: false
+        },
+        {
+          id: 'invest-plus',
+          name: 'Invest+',
+          price: '$79/month',
+          description: 'For serious investors',
+          features: ['Everything in Invest', 'Premium analysis', 'Direct expert access', '1-on-1 consultations'],
+          recommended: true
+        }
+      ]
+    },
     reward: {
       coins: 300,
       experience: 150,

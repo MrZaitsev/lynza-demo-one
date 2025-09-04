@@ -11,7 +11,8 @@ import {
   Hash,
   Clock,
   Users,
-  ArrowLeft
+  ArrowLeft,
+  ArrowRight
 } from 'lucide-react';
 import { telegram } from '../../utils/telegram';
 
@@ -359,23 +360,23 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
       setAnswers(newAnswers);
       setShowExplanation(true);
       telegram.hapticFeedback('medium');
+    };
 
-      setTimeout(() => {
-        setShowExplanation(false);
-        if (currentScenario < scenarios.length - 1) {
-          setCurrentScenario(currentScenario + 1);
-          setTimeLeft(30);
-        } else {
-          // Calculate final score
-          const correctAnswers = newAnswers.filter((answer, index) => 
-            scenarios[index] && scenarios[index].options[answer]?.isCorrect
-          ).length;
-          const finalScore = Math.round((correctAnswers / scenarios.length) * 100);
-          setScore(finalScore);
-          setGameState(finalScore >= 70 ? 'completed' : 'failed');
-          telegram.hapticFeedback(finalScore >= 70 ? 'success' : 'error');
-        }
-      }, 3000);
+    const handleNext = () => {
+      setShowExplanation(false);
+      if (currentScenario < scenarios.length - 1) {
+        setCurrentScenario(currentScenario + 1);
+        setTimeLeft(30);
+      } else {
+        // Calculate final score
+        const correctAnswers = answers.filter((answer, index) => 
+          scenarios[index] && scenarios[index].options[answer]?.isCorrect
+        ).length;
+        const finalScore = Math.round((correctAnswers / scenarios.length) * 100);
+        setScore(finalScore);
+        setGameState(finalScore >= 70 ? 'completed' : 'failed');
+        telegram.hapticFeedback(finalScore >= 70 ? 'success' : 'error');
+      }
     };
 
     useEffect(() => {
@@ -567,19 +568,37 @@ export const MiniGame: React.FC<MiniGameProps> = ({ type, data, onComplete, onBa
           {/* Explanation */}
           {showExplanation && (
             <motion.div
-              className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg"
+              className="mt-6 space-y-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="flex items-start gap-3">
-                <div className="text-2xl">📚</div>
-                <div>
-                  <h5 className="text-blue-300 font-semibold mb-2">Explanation</h5>
-                  <p className="text-blue-200 text-sm">
-                    {scenario.explanation || `The correct answer is "${scenario.options.find(opt => opt.isCorrect)?.text}" because it follows security best practices.`}
-                  </p>
+              <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">📚</div>
+                  <div>
+                    <h5 className="text-blue-300 font-semibold mb-2">Explanation</h5>
+                    <p className="text-blue-200 text-sm">
+                      {scenario.explanation || `The correct answer is "${scenario.options.find(opt => opt.isCorrect)?.text}" because it follows security best practices.`}
+                    </p>
+                  </div>
                 </div>
+              </div>
+              
+              {/* Next Button */}
+              <div className="flex justify-center">
+                <motion.button
+                  onClick={handleNext}
+                  className="btn-primary flex items-center space-x-2 px-6 py-3"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <span>{currentScenario < scenarios.length - 1 ? 'Next Question' : 'See Results'}</span>
+                  <ArrowRight className="w-5 h-5" />
+                </motion.button>
               </div>
             </motion.div>
           )}

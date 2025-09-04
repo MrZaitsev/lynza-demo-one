@@ -28,6 +28,11 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     const video = videoRef.current;
     if (!video) return;
 
+    const handleLoadedMetadata = () => {
+      setIsLoading(false);
+      setDuration(video.duration);
+    };
+
     const handleLoadedData = () => {
       setIsLoading(false);
       setDuration(video.duration);
@@ -48,11 +53,19 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       onVideoEnd?.();
     };
 
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
     video.addEventListener('loadeddata', handleLoadedData);
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('ended', handleEnded);
 
+    // Also try to set loading to false immediately if video is already loaded
+    if (video.readyState >= 1) {
+      setIsLoading(false);
+      setDuration(video.duration);
+    }
+
     return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
       video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('ended', handleEnded);
