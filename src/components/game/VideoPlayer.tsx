@@ -16,8 +16,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   onProgress 
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true); // Start as true since autoplay is enabled
+  const [isMuted, setIsMuted] = useState(true); // Start as true since muted is enabled
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -31,11 +31,25 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     const handleLoadedMetadata = () => {
       setIsLoading(false);
       setDuration(video.duration);
+      // Sync state with actual video state
+      setIsPlaying(!video.paused);
+      setIsMuted(video.muted);
     };
 
     const handleLoadedData = () => {
       setIsLoading(false);
       setDuration(video.duration);
+      // Sync state with actual video state
+      setIsPlaying(!video.paused);
+      setIsMuted(video.muted);
+    };
+
+    const handlePlay = () => {
+      setIsPlaying(true);
+    };
+
+    const handlePause = () => {
+      setIsPlaying(false);
     };
 
     const handleTimeUpdate = () => {
@@ -55,6 +69,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
     video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
     video.addEventListener('timeupdate', handleTimeUpdate);
     video.addEventListener('ended', handleEnded);
 
@@ -62,11 +78,15 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     if (video.readyState >= 1) {
       setIsLoading(false);
       setDuration(video.duration);
+      setIsPlaying(!video.paused);
+      setIsMuted(video.muted);
     }
 
     return () => {
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
       video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
       video.removeEventListener('timeupdate', handleTimeUpdate);
       video.removeEventListener('ended', handleEnded);
     };
@@ -142,6 +162,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           src={src}
           preload="metadata"
           playsInline
+          muted
+          autoPlay
         />
 
         {/* Loading Overlay */}
